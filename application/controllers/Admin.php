@@ -236,60 +236,7 @@ class Admin extends MY_Controller
         echo json_encode($json_data);
     }
 
-    function get_members($cell_id, $running_year)
-    {
-        if ($this->session->userdata('admin_login') != 1)
-            redirect(site_url('login'), 'refresh');
-
-        $columns = array(
-            0 => 'id',
-            1 => 'photo',
-            2 => 'name',
-            3 => 'address',
-            4 => 'email',
-            5 => 'options',
-            6 => 'id'
-        );
-
-        $limit = html_escape($this->input->post('length'));
-        $start = html_escape($this->input->post('start'));
-        $order = $columns[$this->input->post('order')[0]['column']];
-        $dir   = $this->input->post('order')[0]['dir'];
-
-        $totalData = $this->ajaxload->all_members_count();
-        $totalFiltered = $totalData;
-
-        if (empty($this->input->post('search')['value'])) {
-            $members = $this->ajaxload->all_members($limit, $start, $order, $dir);
-        } else {
-            $search = $this->input->post('search')['value'];
-            $members =  $this->ajaxload->student_search($limit, $start, $search, $order, $dir);
-            $totalFiltered = $this->ajaxload->student_search_count($search);
-        }
-
-        $data = array();
-        if (!empty($members)) {
-            foreach ($members as $row) {
-                $nestedData['id'] = $row->enroll_code;
-                $nestedData['photo'] = '1';
-                $nestedData['name'] = '2';
-                $nestedData['address'] = '3';
-                $nestedData['email'] = '4';
-                $nestedData['options'] = '5';
-
-                $data[] = $nestedData;
-            }
-        }
-
-        $json_data = array(
-            "draw"            => intval($this->input->post('draw')),
-            "recordsTotal"    => intval($totalData),
-            "recordsFiltered" => intval($totalFiltered),
-            "data"            => $data
-        );
-
-        echo json_encode($json_data);
-    }
+  
 
 
     function student_marksheet($student_id = '')
